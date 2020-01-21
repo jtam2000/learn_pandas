@@ -2,9 +2,10 @@ import numpy as np
 import pandas as pd
 
 
-def get_some_random_number_multi_dimension(x, y, z):
-    rand = np.random.rand(x, y, z)
+def get_some_random_number_multi_dimension(*argv, **kwargs):
+    rand = np.random.rand(*argv, **kwargs)
     print(rand)
+
 
 def get_some_random_numbers(how_many):
     random_num = np.random.rand(how_many)
@@ -25,4 +26,5 @@ def show_pandas_series_metadata():
 
 
 show_pandas_series_metadata()
-get_some_random_number_multi_dimension(3, 4, 2)
+get_some_random_number_multi_dimension(3, 4, 5, 2)
+get_some_random_number_multi_dimension(2, 3)
