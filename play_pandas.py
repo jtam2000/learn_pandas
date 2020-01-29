@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import os
+import os.path as path
 
 
 def get_some_random_number_multi_dimension(*argv, **kwargs):
@@ -37,7 +37,12 @@ def get_csv_from_website(url, number_of_rows_to_get: int):
         under the Python installed root directory.
         The Python install process does not seem to run this as a default
     """
-    return pd.read_csv(url, nrows=number_of_rows_to_get)
+    data_file = "./artwork_data.csv"
+
+    if not path.exists(data_file):
+        return pd.read_csv(url, nrows=number_of_rows_to_get)
+    else:
+        return pd.read_csv(data_file, nrows=number_of_rows_to_get)
 
 
 def get_tate_data(
@@ -50,7 +55,14 @@ def get_tate_data(
     columns_of_interest = ['id', 'artist', 'title', 'medium',
                            'year', 'acquisitionYear', 'height', 'width', 'units']
 
-    dframe = pd.read_csv(url,
+    local_data_file = "./artwork_data.csv"
+
+    if not path.exists(local_data_file):
+        source_location = local_data_file
+    else:
+        source_location = url
+
+    dframe = pd.read_csv(source_location,
                          usecols=columns_of_interest,
                          index_col='id')
     return dframe
@@ -94,7 +106,6 @@ def get_filtering_particular_artist(dframe: pd.DataFrame,
 
 
 def get_count_of_work_by_each_artist(dframe: pd.DataFrame) -> pd.DataFrame:
-
     """
         GET count of work for each artist, using the value_counts() for the entire column
         This is like ding a group by in SQL for that column and doing a select count(*)
@@ -103,7 +114,7 @@ def get_count_of_work_by_each_artist(dframe: pd.DataFrame) -> pd.DataFrame:
     """
     df = pd.DataFrame(data=dframe['artist'].value_counts())
     df = df.rename_axis("artist")
-    print(df)
+    print("get count:", df)
     return df
 
 
@@ -120,17 +131,17 @@ artist_count, distinct_artists = get_distinct_list_of_artists(df_local)
 [print(artist) for artist in distinct_artists]
 print("distinct artist count:", artist_count)
 
-
 # Filter for one artist
 artist = 'Bacon, Francis'
 count = get_filtering_particular_artist(df_local, artist)
 print("# of works by", artist, "is:", count)
 
-
 # Count # of work by each artist
 count_summary_df = get_count_of_work_by_each_artist(df_local)
-count_summary_df.rename()
+
+count_summary_df.rename = count_summary_df.rename(columns={"artist": "Artifact_Count"})
 print("\ncolumns:", count_summary_df.columns)
 
 print(count_summary_df)
 # [print(count_item["index"]) for count_item in count_summary_df]
+count_summary_df.plot()
