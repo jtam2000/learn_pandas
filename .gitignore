@@ -1,2 +1,6 @@
 .idea/*.iml
 .idea/
+.ipynb_checkpoints/*
+save_file
+save_text.pickle
+tata.json
