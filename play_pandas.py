@@ -72,6 +72,11 @@ def save_data_to_pickle(dframe: pd.DataFrame, save_file: str = "save_data.pickle
     dframe.to_pickle("save_file")
 
 
+def retrieve_from_pickle(pickle_file: str) -> pd.DataFrame:
+    df = pd.read_pickle(pickle_file)
+    return df
+
+
 def get_distinct_list_of_artists(dframe: pd.DataFrame):
     """
         LEARNING Point: DataFrame has a unique() function return distinct elements in a column
@@ -113,8 +118,8 @@ def get_count_of_work_by_each_artist(dframe: pd.DataFrame) -> pd.DataFrame:
     :return: 
     """
     df = pd.DataFrame(data=dframe['artist'].value_counts())
-    df = df.rename_axis("artist")
-    print("get count:", df)
+    df.rename(columns={"artist": "WorkCount"}, inplace=True)
+    print("columns: ", df.columns)
     return df
 
 
@@ -139,9 +144,14 @@ print("# of works by", artist, "is:", count)
 # Count # of work by each artist
 count_summary_df = get_count_of_work_by_each_artist(df_local)
 
-count_summary_df.rename = count_summary_df.rename(columns={"artist": "Artifact_Count"})
-print("\ncolumns:", count_summary_df.columns)
-
 print(count_summary_df)
-# [print(count_item["index"]) for count_item in count_summary_df]
-count_summary_df.plot()
+
+df = retrieve_from_pickle("save_file")
+df.rename(columns={"title": "Long Title"}, inplace=True)
+
+df["short_title"] = df["Long Title"].map(lambda x: str(x)[:20])
+
+df.rename(columns={"artist": "ARTIST"}, inplace=True)
+print(df[["ARTIST", "short_title"]])
+
+df.columns.groupby(artist)
